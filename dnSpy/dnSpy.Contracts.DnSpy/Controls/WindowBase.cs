@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
+using Avalonia.Controls;
 
 namespace dnSpy.Contracts.Controls {
 	/// <summary>

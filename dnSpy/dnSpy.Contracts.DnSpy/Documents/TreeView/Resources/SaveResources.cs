@@ -28,7 +28,9 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.DnSpy.Properties;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.MVVM.Dialogs;
-using Ookii.Dialogs.Wpf;
+// using Ookii.Dialogs.Wpf;
+using Avalonia;
+using Avalonia.Controls;
 using WF = System.Windows.Forms;
 
 namespace dnSpy.Contracts.Documents.TreeView.Resources {

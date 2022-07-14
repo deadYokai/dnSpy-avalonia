@@ -18,7 +18,8 @@
 */
 
 using System.Collections.Generic;
-using Microsoft.VisualStudio.Text;
+using Avalonia;
+using Avalonia.Controls;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>

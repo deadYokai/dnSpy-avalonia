@@ -17,8 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using System.Windows.Media;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Media;
 
 namespace dnSpy.Contracts.Controls {
 	/// <summary>
@@ -38,7 +39,7 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>
 		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none
 		/// </summary>
-		FrameworkElement? ZoomElement { get; }
+		Control? ZoomElement { get; }
 	}
 
 	/// <summary>

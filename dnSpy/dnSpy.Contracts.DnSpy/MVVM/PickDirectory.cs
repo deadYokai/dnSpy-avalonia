@@ -18,7 +18,7 @@
 */
 
 using System.ComponentModel.Composition;
-using Ookii.Dialogs.Wpf;
+// using Ookii.Dialogs.Wpf;
 
 namespace dnSpy.Contracts.MVVM {
 	/// <summary>

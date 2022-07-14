@@ -23,13 +23,13 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Media.TextFormatting;
+using Avalonia;
+using Avalonia.Media;
+using AvaloniaEdit.Text;
+using Control = Avalonia.Controls.Control;
 
 namespace dnSpy.Contracts.Controls {
-	sealed class FastTextBlock : FrameworkElement {
+	sealed class FastTextBlock : Control {
 		public interface IFastTextSource {
 			void UpdateParent(FastTextBlock ftb);
 			TextSource Source { get; }
@@ -49,18 +49,18 @@ namespace dnSpy.Contracts.Controls {
 		}
 
 
-		public static readonly DependencyProperty TextProperty;
-		public static readonly DependencyProperty FontFamilyProperty;
-		public static readonly DependencyProperty FontStyleProperty;
-		public static readonly DependencyProperty FontWeightProperty;
-		public static readonly DependencyProperty FontStretchProperty;
-		public static readonly DependencyProperty FontSizeProperty;
-		public static readonly DependencyProperty ForegroundProperty;
-		public static readonly DependencyProperty BackgroundProperty;
+		public static readonly AvaloniaProperty TextProperty;
+		public static readonly AvaloniaProperty FontFamilyProperty;
+		public static readonly AvaloniaProperty FontStyleProperty;
+		public static readonly AvaloniaProperty FontWeightProperty;
+		public static readonly AvaloniaProperty FontStretchProperty;
+		public static readonly AvaloniaProperty FontSizeProperty;
+		public static readonly AvaloniaProperty ForegroundProperty;
+		public static readonly AvaloniaProperty BackgroundProperty;
 
 		static FastTextBlock() {
 			TextProperty =
-				DependencyProperty.Register(nameof(Text), typeof(string), typeof(FastTextBlock),
+				AvaloniaProperty.Register(nameof(Text), typeof(string), typeof(FastTextBlock),
 					new FrameworkPropertyMetadata("",
 						FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
 			FontFamilyProperty = TextElement.FontFamilyProperty.AddOwner(typeof(FastTextBlock));
@@ -107,14 +107,14 @@ namespace dnSpy.Contracts.Controls {
 
 			public TextProps(FastTextBlock tb) => this.tb = tb;
 
-			public override Brush BackgroundBrush => (Brush)tb.GetValue(BackgroundProperty);
-			public override CultureInfo CultureInfo => CultureInfo.CurrentUICulture;
-			public override double FontHintingEmSize => 12;
-			public override double FontRenderingEmSize => (double)tb.GetValue(FontSizeProperty);
-			public override Brush ForegroundBrush => (Brush)tb.GetValue(ForegroundProperty);
-			public override TextDecorationCollection? TextDecorations => null;
-			public override TextEffectCollection? TextEffects => null;
-			public override Typeface Typeface => tb.GetTypeface();
+			public Brush BackgroundBrush => (Brush)tb.GetValue(BackgroundProperty);
+			public CultureInfo CultureInfo => CultureInfo.CurrentUICulture;
+			public double FontHintingEmSize => 12;
+			public double FontRenderingEmSize => (double)tb.GetValue(FontSizeProperty);
+			public Brush ForegroundBrush => (Brush)tb.GetValue(ForegroundProperty);
+			public TextDecorationCollection? TextDecorations => null;
+			public TextEffectCollection? TextEffects => null;
+			public Typeface Typeface => tb.GetTypeface();
 		}
 
 		class TextSrc : TextSource, IFastTextSource {
@@ -154,14 +154,14 @@ namespace dnSpy.Contracts.Controls {
 				props = new TextProps(tb);
 			}
 
-			public override TextRunProperties DefaultTextRunProperties => props;
-			public override bool FirstLineInParagraph => false;
-			public override FlowDirection FlowDirection => tb.FlowDirection;
-			public override double Indent => 0;
-			public override double LineHeight => 0;
-			public override TextAlignment TextAlignment => TextAlignment.Left;
-			public override TextMarkerProperties? TextMarkerProperties => null;
-			public override TextWrapping TextWrapping => TextWrapping.NoWrap;
+			public TextRunProperties DefaultTextRunProperties => props;
+			public bool FirstLineInParagraph => false;
+			public FlowDirection FlowDirection => tb.FlowDirection;
+			public double Indent => 0;
+			public double LineHeight => 0;
+			public TextAlignment TextAlignment => TextAlignment.Left;
+			public TextMarkerProperties? TextMarkerProperties => null;
+			public TextWrapping TextWrapping => TextWrapping.NoWrap;
 		}
 
 
@@ -215,7 +215,7 @@ namespace dnSpy.Contracts.Controls {
 		static readonly TextFormatter TextFormatter_Ideal = TextFormatter.Create(TextFormattingMode.Ideal);
 		static readonly TextFormatter TextFormatter_Display = TextFormatter.Create(TextFormattingMode.Display);
 
-		public static TextFormatter GetTextFormatter(DependencyObject owner) =>
+		public static TextFormatter GetTextFormatter(AvaloniaProperty owner) =>
 			TextOptions.GetTextFormattingMode(owner) == TextFormattingMode.Ideal ? TextFormatter_Ideal : TextFormatter_Display;
 	}
 }

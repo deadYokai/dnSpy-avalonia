@@ -18,26 +18,33 @@
 */
 
 using System;
-using System.Windows;
-using System.Windows.Input;
+// using System.Windows;
+// using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
+using AvaloniaEdit;
+using AvaloniaEdit.Rendering;
 
 namespace dnSpy.MainApp {
-	sealed partial class MainWindow : MetroWindow {
-		public MainWindow(object? content) {
-			InitializeComponent();
-			contentPresenter.Content = content;
-			CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, (s, e) => Close(), (s, e) => e.CanExecute = true));
+	sealed partial class MainWindow : Window {
+		public MainWindow(object? content){
+			InitializeIfNeeded();
+			//InitializeComponent();
+			//TODO
+			//contentPresenter.Content = content;
+			//CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, (s, e) => Close(), (s, e) => e.CanExecute = true));
 		}
 
-		private protected override bool HandleHoriztonalScroll(IInputElement element, short delta) {
-			if (element is WpfTextView wpfTextView) {
-				if ((wpfTextView.Options.WordWrapStyle() & WordWrapStyles.WordWrap) == 0) {
+		private protected  bool HandleHoriztonalScroll(IInputElement element, short delta) {
+			if (element is TextView wpfTextView) {
+				if (wpfTextView.Options.WordWrapIndentation == 0) {
 					var deltaDouble = (double)delta;
-					var currentViewport = wpfTextView.ViewportLeft;
+					var currentViewport = wpfTextView.Document.LineCount;
 
 					bool isReverseScroll = deltaDouble < 0;
 
@@ -47,18 +54,19 @@ namespace dnSpy.MainApp {
 								deltaDouble = 0 - currentViewport;
 							}
 
-							wpfTextView.ViewScroller.ScrollViewportHorizontallyByPixels(deltaDouble);
+							
+							//wpfTextView.ViewScroller.ScrollViewportHorizontallyByPixels(deltaDouble);
 							return true;
 						}
 					}
 					else {
-						var maxScroll = Math.Max(currentViewport, wpfTextView.MaxTextRightCoordinate - wpfTextView.ViewportWidth + WpfTextViewConstants.EXTRA_HORIZONTAL_SCROLLBAR_WIDTH);
+						var maxScroll = Math.Max(currentViewport, wpfTextView.MaxWidth - wpfTextView.Width + WpfTextViewConstants.EXTRA_HORIZONTAL_SCROLLBAR_WIDTH);
 						if (currentViewport < maxScroll) {
 							if (currentViewport + deltaDouble > maxScroll) {
 								deltaDouble = maxScroll - currentViewport;
 							}
 
-							wpfTextView.ViewScroller.ScrollViewportHorizontallyByPixels(deltaDouble);
+							//wpfTextView.ViewScroller.ScrollViewportHorizontallyByPixels(deltaDouble);
 							return true;
 						}
 					}
@@ -66,7 +74,7 @@ namespace dnSpy.MainApp {
 
 				return false;
 			}
-			return base.HandleHoriztonalScroll(element, delta);
+			return HandleHoriztonalScroll(element, delta);
 		}
 	}
 }

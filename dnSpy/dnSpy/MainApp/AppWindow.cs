@@ -24,8 +24,9 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Reflection;
 using System.Security.Principal;
-using System.Windows;
-using System.Windows.Input;
+using Avalonia;
+using Avalonia.Input;
+using Avalonia.Controls;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
@@ -33,6 +34,7 @@ using dnSpy.Contracts.Settings;
 using dnSpy.Controls;
 using dnSpy.Events;
 using dnSpy.Properties;
+using Rect = System.Windows.Rect;
 
 namespace dnSpy.MainApp {
 	[Export, Export(typeof(IAppWindow))]
@@ -100,7 +102,7 @@ namespace dnSpy.MainApp {
 			assemblyInformationalVersion = CalculateAssemblyInformationalVersion(GetType().Assembly);
 			uiSettings = new UISettings(settingsService);
 			uiSettings.Read();
-			stackedContent = new StackedContent<IStackedContentChild>(margin: new Thickness(6));
+			stackedContent = new StackedContent<IStackedContentChild>(margin: new Thickness((double)6));
 			this.documentTabService = documentTabService;
 			statusBar = new AppStatusBar();
 			this.appToolBar = appToolBar;
@@ -144,7 +146,8 @@ namespace dnSpy.MainApp {
 			new SavedWindowStateRestorer(mainWindow, uiSettings.SavedWindowState, DefaultWindowLocation);
 			mainWindow.Closing += MainWindow_Closing;
 			mainWindow.Closed += MainWindow_Closed;
-			mainWindow.GotKeyboardFocus += MainWindow_GotKeyboardFocus;
+			//TODO: mainWindow.GotKeyboardFocus += MainWindow_GotKeyboardFocus;
+			
 			RefreshToolBar();
 			return mainWindow;
 		}
@@ -177,7 +180,9 @@ namespace dnSpy.MainApp {
 
 		void MainWindow_Closed(object? sender, EventArgs e) => mainWindowClosed.Raise(this, e);
 
-		void MainWindow_GotKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) {
+		
+		//TODO
+		/*void MainWindow_GotKeyboardFocus(object? sender, KeyboardFocusChangedEventArgs e) {
 			if (e.NewFocus == MainWindow) {
 				var g = documentTabService.TabGroupService.ActiveTabGroup;
 				if (g is not null && g.ActiveTabContent is not null) {
@@ -186,7 +191,7 @@ namespace dnSpy.MainApp {
 					return;
 				}
 			}
-		}
+		}*/
 
 		public event EventHandler<CancelEventArgs> MainWindowClosing {
 			add => mainWindowClosing.Add(value);

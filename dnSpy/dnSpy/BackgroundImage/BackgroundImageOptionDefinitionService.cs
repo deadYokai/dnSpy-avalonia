@@ -23,11 +23,12 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.BackgroundImage;
 using dnSpy.Contracts.Hex.Editor;
-using Microsoft.VisualStudio.Text.Editor;
+using Avalonia;
+using Avalonia.Controls;
 
 namespace dnSpy.BackgroundImage {
 	interface IBackgroundImageOptionDefinitionService {
-		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(IWpfTextView wpfTextView);
+		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(TextView wpfTextView);
 		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(WpfHexView wpfHexView);
 		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata>[] AllSettings { get; }
 	}
@@ -41,7 +42,7 @@ namespace dnSpy.BackgroundImage {
 		[ImportingConstructor]
 		BackgroundImageOptionDefinitionService([ImportMany] IEnumerable<Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata>> backgroundImageOptionDefinitions) => this.backgroundImageOptionDefinitions = backgroundImageOptionDefinitions.OrderBy(a => a.Metadata.Order).ToArray();
 
-		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(IWpfTextView wpfTextView) {
+		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(TextView wpfTextView) {
 			foreach (var lz in backgroundImageOptionDefinitions) {
 				if (lz.Value.IsSupported(wpfTextView))
 					return lz;

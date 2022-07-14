@@ -29,11 +29,7 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
@@ -52,6 +48,22 @@ using dnSpy.Roslyn.Text.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
 using Microsoft.VisualStudio.Composition;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Platform;
+using Avalonia.Input;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
+using MessageBox.Avalonia.Enums;
+using Avalonia.Input;
+using Avalonia.Input.Raw;
+using Avalonia.Layout;
+using Avalonia.Platform;
+using Avalonia.Rendering;
+using AvaloniaEdit;
+using Application = Avalonia.Application;
+using ContextMenu = Avalonia.Controls.ContextMenu;
+using Key = Avalonia.Input.Key;
 
 namespace dnSpy.MainApp {
 	sealed partial class App : Application {
@@ -67,16 +79,20 @@ namespace dnSpy.MainApp {
 			TaskScheduler.UnobservedTaskException += (s, e) => e.SetObserved();
 			if (!System.Diagnostics.Debugger.IsAttached) {
 				AppDomain.CurrentDomain.UnhandledException += (s, e) => ShowException(e.ExceptionObject as Exception);
-				Dispatcher.CurrentDispatcher.UnhandledException += (s, e) => {
+				// TODO
+				
+				/*Dispatcher.CurrentDispatcher.UnhandledException += (s, e) => {
 					ShowException(e.Exception);
 					e.Handled = true;
-				};
+				};*/
+				
 			}
 		}
 
 		static void ShowException(Exception? ex) {
 			string msg = ex?.ToString() ?? "Unknown exception";
-			MessageBox.Show(msg, Constants.DnSpy, MessageBoxButton.OK, MessageBoxImage.Error);
+			MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow(Constants.DnSpy, msg, ButtonEnum.Ok,
+				Icon.Error).Show();
 		}
 
 		readonly ResourceManagerTokenCacheImpl resourceManagerTokenCacheImpl;
@@ -108,10 +124,13 @@ namespace dnSpy.MainApp {
 
 			AddAppContextFixes();
 			InstallExceptionHandlers();
-			InitializeComponent();
+			Initialize();
+			//InitializeComponent();
 			UIFixes();
-
-			Exit += App_Exit;
+			
+			if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime ad) {
+				ad.Exit += App_Exit;
+			}
 		}
 
 		void AddAppContextFixes() {
@@ -248,7 +267,7 @@ namespace dnSpy.MainApp {
 
 		void OnTokensUpdated() {
 			if (writingCachedMefFile)
-				Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(OnTokensUpdated));
+				Dispatcher.UIThread.InvokeAsync(new Action(OnTokensUpdated), DispatcherPriority.Background);
 			else
 				UpdateResourceManagerTokens();
 		}
@@ -477,15 +496,17 @@ namespace dnSpy.MainApp {
 
 		void MainWindow_SourceInitialized(object? sender, EventArgs e) {
 			Debug2.Assert(appWindow is not null);
-			appWindow.MainWindow.SourceInitialized -= MainWindow_SourceInitialized;
+			//appWindow.MainWindow.SourceInitialized -= MainWindow_SourceInitialized;
 
-			var hwndSource = PresentationSource.FromVisual(appWindow.MainWindow) as HwndSource;
+			//TODO
+			//var hwndSource = ((TopLevel)appWindow.MainWindow.GetVisualRoot());
+			/*var hwndSource = PresentationSource.FromVisual(appWindow.MainWindow) as HwndSource;
 			Debug2.Assert(hwndSource is not null);
 			if (hwndSource is not null)
-				hwndSource.AddHook(WndProc);
+				hwndSource.AddHook(WndProc);*/
 		}
 
-		void App_Exit(object? sender, ExitEventArgs e) {
+		void App_Exit(object? sender, ControlledApplicationLifetimeExitEventArgs e) {
 			extensionService?.OnAppExit();
 			dsLoaderService?.Save();
 			try {
@@ -499,7 +520,7 @@ namespace dnSpy.MainApp {
 
 		void UIFixes() {
 			// Add Ctrl+Shift+Z as a redo command. Don't know why it isn't enabled by default.
-			ApplicationCommands.Redo.InputGestures.Add(new KeyGesture(Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
+			//ApplicationCommands.Redo.InputGestures.Add(new KeyGesture(Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
 			FixEditorContextMenuStyle();
 		}
 
@@ -521,8 +542,9 @@ namespace dnSpy.MainApp {
 			Resources.Add(type, style);
 		}
 
-		protected override void OnStartup(StartupEventArgs e) {
-			base.OnStartup(e);
+		protected void OnStartup(ControlledApplicationLifetimeStartupEventArgs e) {
+			//base.OnStartup(e);
+			
 
 			exportProvider = initializeMEFTask.GetAwaiter().GetResult();
 
@@ -546,7 +568,7 @@ namespace dnSpy.MainApp {
 			appWindow.CommandLineArgs = args;
 
 			var win = appWindow.InitializeMainWindow();
-			appWindow.MainWindow.SourceInitialized += MainWindow_SourceInitialized;
+			//appWindow.MainWindow.SourceInitialized += MainWindow_SourceInitialized;
 			dsLoaderService.OnAppLoaded += DsLoaderService_OnAppLoaded;
 			dsLoaderService.Initialize(appWindow, win, args);
 			extensionService.LoadExtensions(Resources.MergedDictionaries);
@@ -576,13 +598,14 @@ namespace dnSpy.MainApp {
 			Debug2.Assert(appWindow is not null);
 			if (appArgs.Activate && appWindow.MainWindow.WindowState == WindowState.Minimized)
 				WindowUtils.SetState(appWindow.MainWindow, WindowState.Normal);
+			
 
 			var decompiler = GetDecompiler(appArgs.Language);
 			if (decompiler is not null)
 				exportProvider.GetExportedValue<IDecompilerService>().Decompiler = decompiler;
 
 			if (appArgs.FullScreen is not null)
-				appWindow.MainWindow.IsFullScreen = appArgs.FullScreen.Value;
+				//TODO: appWindow.MainWindow.IsFullScreen = appArgs.FullScreen.Value;
 
 			if (appArgs.NewTab)
 				exportProvider.GetExportedValue<IDocumentTabService>().OpenEmptyTab();
@@ -595,8 +618,9 @@ namespace dnSpy.MainApp {
 
 			// The files were lazily added to the treeview. Make sure they've been added to the TV
 			// before we process the remaining command line args.
+			// 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => HandleAppArgs2(appArgs)));
 			if (files.Length > 0)
-				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => HandleAppArgs2(appArgs)));
+				Dispatcher.UIThread.InvokeAsync(new Action(() => HandleAppArgs2(appArgs)), DispatcherPriority.Background);
 			else
 				HandleAppArgs2(appArgs);
 		}

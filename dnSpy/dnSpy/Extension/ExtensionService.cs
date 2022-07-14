@@ -24,7 +24,8 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Windows;
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using dnSpy.Contracts.Extension;
 
 namespace dnSpy.Extension {
@@ -60,7 +61,7 @@ namespace dnSpy.Extension {
 			this.extensions = extensions.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
-		public void LoadExtensions(Collection<ResourceDictionary> mergedDictionaries) {
+		public void LoadExtensions(IList<IResourceProvider> mergedDictionaries) {
 			LoadAutoLoaded(AutoLoadedLoadType.BeforeExtensions);
 			// It's not an extension but it needs to show stuff in the options dialog box
 			AddMergedDictionary(mergedDictionaries, typeof(Roslyn.Text.Classification.RoslynClassifier).Assembly.GetName(), "Themes/wpf.styles.templates.xaml");
@@ -76,9 +77,9 @@ namespace dnSpy.Extension {
 			LoadAutoLoaded(AutoLoadedLoadType.AfterExtensionsLoaded);
 		}
 
-		void AddMergedDictionary(Collection<ResourceDictionary> mergedDictionaries, AssemblyName asm, string rsrc) {
+		void AddMergedDictionary(IList<IResourceProvider> mergedDictionaries, AssemblyName asm, string rsrc) {
 			var uri = new Uri("pack://application:,,,/" + asm.Name + ";v" + asm.Version + ";component/" + rsrc, UriKind.Absolute);
-			mergedDictionaries.Add(new ResourceDictionary { Source = uri });
+			mergedDictionaries.Add(new ResourceInclude() { Source = uri });
 		}
 
 		void LoadAutoLoaded(AutoLoadedLoadType loadType) {

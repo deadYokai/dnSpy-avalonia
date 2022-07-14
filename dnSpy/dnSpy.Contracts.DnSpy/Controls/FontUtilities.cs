@@ -22,8 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Windows;
-using System.Windows.Media;
+using Avalonia.Media;
 
 namespace dnSpy.Contracts.Controls {
 	/// <summary>
@@ -120,6 +119,7 @@ namespace dnSpy.Contracts.Controls {
 					// This can throw if an update was installed that removed support for the current
 					// OS, see https://github.com/dnSpy/dnSpy/issues/692
 					return Fonts.SystemFontFamilies;
+					
 				}
 				catch {
 					return Array.Empty<FontFamily>();

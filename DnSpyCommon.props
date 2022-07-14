@@ -5,9 +5,9 @@
         - build.ps1
         - .github/workflows/build.yml
     NOTE: Update the ABOVE files when TargetFrameworks is updated -->
-    <TargetFrameworks>net48;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>net48;net6.0</TargetFrameworks>
     <IsDotNetFramework>false</IsDotNetFramework>
-    <IsDotNet>false</IsDotNet>
+    <IsDotNet>true</IsDotNet>
     <IsSelfContainedDotNet>false</IsSelfContainedDotNet>
     <IsDotNetFramework Condition=" $(TargetFramework.StartsWith(net4)) ">true</IsDotNetFramework>
     <IsDotNet Condition=" !$(TargetFramework.StartsWith(net4)) ">false</IsDotNet>
@@ -20,7 +20,7 @@
     <!-- Make sure we don't have to publish each extension to get all their refs -->
     <CopyLocalLockFileAssemblies Condition=" '$(IsDotNet)' == 'true' ">true</CopyLocalLockFileAssemblies>
     <!-- If this gets updated, also update .github/workflows/build.yml and build.ps1 -->
-    <DnSpyRuntimeIdentifiers>win-x86;win-x64</DnSpyRuntimeIdentifiers>
+    <DnSpyRuntimeIdentifiers>win-x86;win-x64;linux-x64</DnSpyRuntimeIdentifiers>
     <SatelliteResourceLanguages>cs;de;es;es-ES;fa;fr;hu;it;pt-BR;pt-PT;ru;tr;uk;zh-CN</SatelliteResourceLanguages>
 
     <!-- Update app.config whenever this value changes -->
@@ -44,7 +44,6 @@
     <MSVSIntellisenseVersion>15.5.27130</MSVSIntellisenseVersion>
     <MSVSTextVersion>15.5.27130</MSVSTextVersion>
     <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
-    <OokiiDialogsWpfVersion>5.0.1</OokiiDialogsWpfVersion>
     <RoslynVersion>4.1.0</RoslynVersion>
     <SCCompositionVersion>6.0.0</SCCompositionVersion>
   </PropertyGroup>
@@ -57,5 +56,10 @@
     <HasCOMReference Condition=" '$(MSBuildRuntimeType)' != 'Core' ">true</HasCOMReference>
     <DefineConstants Condition=" '$(HasCOMReference)' == 'true' ">$(DefineConstants);HAS_COMREFERENCE</DefineConstants>
   </PropertyGroup>
+
+  <!-- <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.16" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.16" />
+  </ItemGroup> -->
 
 </Project>

@@ -19,7 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Controls;

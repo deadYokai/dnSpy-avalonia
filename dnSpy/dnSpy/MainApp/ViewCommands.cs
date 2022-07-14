@@ -19,6 +19,7 @@
 
 using System.ComponentModel.Composition;
 using System.Windows.Input;
+using AvaloniaEdit;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.TreeView;

@@ -18,6 +18,7 @@
 */
 
 using System.Windows;
+using Avalonia.Input;
 
 namespace dnSpy.Contracts.Controls {
 	/// <summary>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\DnSpyCommon.props" />
 
@@ -11,8 +11,8 @@
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <UseWPF>true</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
+     
+     
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ookii.Dialogs.Wpf" Version="$(OokiiDialogsWpfVersion)" />
+    <!-- <PackageReference Include="Ookii.Dialogs.Wpf" Version="$(OokiiDialogsWpfVersion)" /> -->
     <!--TODO: This is a workaround for a bug where we get the wrong version of System.Security.Permissions.
     Microsoft.VisualStudio.Composition.NetFxAttributes and Microsoft.VisualStudio.Composition reference
     System.ComponentModel.Composition 4.5.0 which references System.Security.Permissions 4.5.0 which has
@@ -46,10 +46,12 @@
     Will probably be fixed after Microsoft.VisualStudio.Composition.NetFxAttributes and Microsoft.VisualStudio.Composition
     reference a newer System.ComponentModel.Composition nuget in which case this hack can be removed.
     -->
+    <PackageReference Include="Avalonia" Version="0.10.16" />
+    <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.0" />
     <PackageReference Include="System.ComponentModel.Composition" Version="$(SCCompositionVersion)" Condition=" '$(CopyLocalLockFileAssemblies)' == 'true' " />
     <PackageReference Include="Microsoft.VisualStudio.Composition.NetFxAttributes" Version="$(MSVSCompositionVersion)" />
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense" Version="$(MSVSIntellisenseVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" />
+    <!-- <PackageReference Include="Microsoft.VisualStudio.Text.UI.Wpf" Version="$(MSVSTextVersion)" /> -->
   </ItemGroup>
 
 </Project>

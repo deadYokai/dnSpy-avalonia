@@ -20,9 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
+using Avalonia.Controls;
 using dnSpy.Contracts.App;
 using dnSpy.Controls;
 
@@ -30,7 +28,6 @@ namespace dnSpy.MainApp {
 	[Export]
 	sealed class AppStatusBar : IAppStatusBar, IStackedContentChild {
 		int openCounter;
-
 		public object? UIObject => statusBar;
 		readonly StatusBar statusBar;
 		readonly TextBlock textBlock;

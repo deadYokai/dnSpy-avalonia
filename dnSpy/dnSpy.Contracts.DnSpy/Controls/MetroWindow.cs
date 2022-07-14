@@ -22,14 +22,19 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Shell;
+using Avalonia;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using AvaloniaEdit;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Utilities;
+using Key = Avalonia.Input.Key;
+using Point = Avalonia.Point;
+using Size = Avalonia.Size;
 
 namespace dnSpy.Contracts.Controls {
 	/// <summary>
@@ -50,16 +55,16 @@ namespace dnSpy.Contracts.Controls {
 		/// Constructor
 		/// </summary>
 		public MetroWindow() {
-			SetValue(WindowChrome.WindowChromeProperty, CreateWindowChromeObject());
+			//SetValue(WindowChrome.WindowChromeProperty, CreateWindowChromeObject());
 			// Since the system menu had to be disabled, we must add this command
 			var cmd = new RelayCommand(a => ShowSystemMenu(this), a => !IsFullScreen);
-			InputBindings.Add(new KeyBinding(cmd, Key.Space, ModifierKeys.Alt));
+			HotKeyManager.SetHotKey(cmd, new KeyGesture(Key.Space, KeyModifiers.Alt));
 			MetroWindowCreated?.Invoke(this, new MetroWindowCreatedEventArgs(this));
 		}
 
 		/// <inheritdoc/>
-		protected override void OnSourceInitialized(EventArgs e) {
-			base.OnSourceInitialized(e);
+		protected void OnSourceInitialized(EventArgs e) {
+			//base.OnSourceInitialized(e);
 
 			var hwndSource = PresentationSource.FromVisual(this) as HwndSource;
 			Debug2.Assert(hwndSource is not null);
@@ -143,6 +148,7 @@ namespace dnSpy.Contracts.Controls {
 				}
 
 				var element = Mouse.DirectlyOver;
+				
 				if (element is null)
 					return IntPtr.Zero;
 
